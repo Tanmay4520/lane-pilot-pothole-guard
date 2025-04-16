@@ -1,0 +1,22 @@
+
+# Python dependencies for Lane Pilot Pothole Guard
+
+# Computer Vision
+opencv-python>=4.5.0
+numpy>=1.20.0
+
+# Deep Learning
+torch>=1.9.0
+torchvision>=0.10.0
+
+# YOLOv8 
+ultralytics>=8.0.0
+
+# Video processing
+ffmpeg-python>=0.2.0
+
+# Utility
+tqdm>=4.62.0
+matplotlib>=3.4.0
+pillow>=8.2.0
+scipy>=1.7.0

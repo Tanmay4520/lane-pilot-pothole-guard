@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
 
-## Project info
+# Lane Pilot Pothole Guard
 
-**URL**: https://lovable.dev/projects/a1c2e120-9016-4067-b2ba-5ba8c03a0476
+An advanced driver assistance system application that combines YOLOv8 lane detection with OpenCV-based pothole detection to enhance driving safety.
 
-## How can I edit this code?
+## Project Description
 
-There are several ways of editing your application.
+Lane Pilot Pothole Guard is a demonstration application that showcases:
+- Dynamic lane detection using YOLOv8
+- Steering direction determination based on lane alignment
+- Real-time pothole detection using computer vision techniques
+- Safety alerts when hazards are detected
+- Annotated video output showing system decisions
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a1c2e120-9016-4067-b2ba-5ba8c03a0476) and start prompting.
+1. **YOLOv8 Lane Detection**
+   - Identifies lane markings and road objects
+   - Calculates optimal steering trajectory
+   - Provides real-time steering recommendations
 
-Changes made via Lovable will be committed automatically to this repo.
+2. **Pothole Detection**
+   - Uses simulated SLAM techniques with OpenCV
+   - Detects potholes using grayscale thresholding and contour analysis
+   - Estimates distance to detected potholes
 
-**Use your preferred IDE**
+3. **Integrated Decision System**
+   - Overrides steering decisions when potholes are detected
+   - Issues "BRAKE" alerts for imminent hazards
+   - Visual annotations of all detected objects
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Demo
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+This repository contains a React web application that demonstrates the lane pilot and pothole guard functionality. In a full implementation, the Python backend would process videos through YOLOv8 and OpenCV to generate the annotated output.
 
-Follow these steps:
+### Python Implementation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+The core algorithms demonstrated in this project would be implemented with the following Python code structure:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- `main.py`: The integrated pipeline combining YOLOv8 and pothole detection
+- `pothole_detector.py`: Dedicated module for pothole detection using OpenCV
+- `requirements.txt`: Python dependencies for the project
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Requirements
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+The Python implementation would require:
+```
+opencv-python>=4.5.0
+numpy>=1.20.0
+torch>=1.9.0
+ultralytics>=8.0.0
 ```
 
-**Edit a file directly in GitHub**
+## Sample Data Sources
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+You can find sample driving videos for testing from these sources:
+- [Berkeley DeepDrive Dataset (BDD100K)](https://bdd-data.berkeley.edu/)
+- [Cityscapes Dataset](https://www.cityscapes-dataset.com/)
+- [KITTI Road Dataset](http://www.cvlibs.net/datasets/kitti/eval_road.php)
+- [Indian Driving Dataset (IDD)](https://idd.insaan.iiit.ac.in/)
 
-**Use GitHub Codespaces**
+## Getting Started with the Demo
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Run `npm run dev` to start the development server
+4. Upload a driving video to see the lane pilot and pothole detection in action
 
-## What technologies are used for this project?
+## Potential Applications
 
-This project is built with:
+- Advanced Driver Assistance Systems (ADAS)
+- Autonomous vehicle development
+- Road quality monitoring and management
+- Driver training and education
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Future Enhancements
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/a1c2e120-9016-4067-b2ba-5ba8c03a0476) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Integration with real-time computer vision processing
+- Improved pothole detection using depth estimation
+- Integration with GPS data for route planning
+- Support for adverse weather conditions
