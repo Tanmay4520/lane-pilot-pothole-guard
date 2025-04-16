@@ -6,9 +6,11 @@ import {
   AlertOctagon,
   ArrowUp,
   PauseCircle,
-  PlayCircle
+  PlayCircle,
+  Gauge
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 // These would be returned by our Python backend in a real implementation
 type SteeringDirection = 'left' | 'right' | 'straight' | 'brake';
@@ -16,6 +18,8 @@ type DetectionData = {
   frame: number;
   steering: SteeringDirection;
   potholeDetected: boolean;
+  potholeDistance?: number; // Added distance information
+  speed: number; // Added speed information
   objects: { type: string; confidence: number }[];
 }
 
@@ -34,7 +38,12 @@ const VideoPlayer = ({ videoFile }: VideoPlayerProps) => {
   // This is just for demonstration
   const [steeringDirection, setSteeringDirection] = useState<SteeringDirection>('straight');
   const [potholeDetected, setPotholeDetected] = useState(false);
+  const [potholeDistance, setPotholeDistance] = useState<number | null>(null); // New state for pothole distance
+  const [currentSpeed, setCurrentSpeed] = useState(0); // New state for current speed
+  const [speedWarning, setSpeedWarning] = useState(false); // New state for speed warning
   const [detectedObjects, setDetectedObjects] = useState<{ type: string; confidence: number }[]>([]);
+
+  const speedLimit = 60; // Speed limit in km/h
 
   useEffect(() => {
     if (videoFile) {
@@ -81,6 +90,13 @@ const VideoPlayer = ({ videoFile }: VideoPlayerProps) => {
     // Create a deterministic but changing pattern based on video time
     const cyclePosition = (time % 10) / 10; // 0 to 1 every 10 seconds
     
+    // Simulate speed (40-80 km/h range)
+    const simulatedSpeed = 40 + Math.sin(time * 0.5) * 20 + Math.sin(time * 0.2) * 20;
+    setCurrentSpeed(Math.round(simulatedSpeed));
+    
+    // Set speed warning if over speed limit
+    setSpeedWarning(simulatedSpeed > speedLimit);
+    
     // Steering direction changes
     if (cyclePosition < 0.3) {
       setSteeringDirection('straight');
@@ -92,8 +108,13 @@ const VideoPlayer = ({ videoFile }: VideoPlayerProps) => {
       // Simulate pothole detection triggering a brake
       setPotholeDetected(true);
       setSteeringDirection('brake');
+      
+      // Simulate pothole distance (closer as time progresses in this segment)
+      const distance = 10 - ((cyclePosition - 0.7) * 33.3);
+      setPotholeDistance(Math.max(0.5, parseFloat(distance.toFixed(1))));
     } else {
       setPotholeDetected(false);
+      setPotholeDistance(null);
       setSteeringDirection('straight');
     }
     
@@ -141,7 +162,7 @@ const VideoPlayer = ({ videoFile }: VideoPlayerProps) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-8">
-      <div className="video-container rounded-lg overflow-hidden bg-black">
+      <div className="video-container rounded-lg overflow-hidden bg-black relative">
         {videoUrl ? (
           <>
             <video
@@ -153,17 +174,27 @@ const VideoPlayer = ({ videoFile }: VideoPlayerProps) => {
             
             {/* Annotation overlay */}
             <div className="annotation-overlay">
+              {/* Speed indicator */}
+              <div className={`speed-indicator ${speedWarning ? 'speed-warning' : ''}`}>
+                <Gauge className="h-5 w-5" />
+                <span>{currentSpeed} km/h</span>
+                {speedWarning && <span className="warning-text">SLOW DOWN!</span>}
+              </div>
+              
               {/* Steering indicator */}
               <div className={`steering-indicator steering-${steeringDirection}`}>
                 {getSteeringIcon()}
                 <span>{steeringDirection.toUpperCase()}</span>
               </div>
               
-              {/* Pothole alert */}
+              {/* Pothole alert with distance */}
               {potholeDetected && (
                 <div className="pothole-alert">
                   <AlertOctagon className="h-5 w-5" />
                   <span>POTHOLE DETECTED</span>
+                  {potholeDistance !== null && (
+                    <span className="distance-text">{potholeDistance}m</span>
+                  )}
                 </div>
               )}
               
@@ -247,6 +278,37 @@ const VideoPlayer = ({ videoFile }: VideoPlayerProps) => {
                   {potholeDetected ? 'WARNING: HAZARD DETECTED' : 'SAFE'}
                 </span>
               </div>
+            </div>
+            
+            {/* New speed display */}
+            <div className="bg-muted/50 p-3 rounded">
+              <h4 className="font-medium text-sm mb-2">Current Speed</h4>
+              <div className="flex items-center">
+                <span className={`inline-block w-3 h-3 rounded-full mr-2 ${
+                  speedWarning ? 'bg-warning' : 'bg-success'
+                }`}></span>
+                <span className="font-medium">
+                  {currentSpeed} km/h {speedWarning && <span className="text-warning font-bold">(OVER LIMIT)</span>}
+                </span>
+              </div>
+            </div>
+            
+            {/* New pothole distance display */}
+            <div className="bg-muted/50 p-3 rounded">
+              <h4 className="font-medium text-sm mb-2">Pothole Information</h4>
+              {potholeDetected ? (
+                <div className="flex items-center">
+                  <span className="inline-block w-3 h-3 rounded-full mr-2 bg-destructive"></span>
+                  <span className="font-medium">
+                    Distance: {potholeDistance}m
+                    {potholeDistance && potholeDistance < 2 && (
+                      <span className="text-destructive font-bold ml-2">(IMMINENT)</span>
+                    )}
+                  </span>
+                </div>
+              ) : (
+                <span className="font-medium text-success">No potholes detected</span>
+              )}
             </div>
           </div>
         </div>
